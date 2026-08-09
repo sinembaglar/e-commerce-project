@@ -1,10 +1,17 @@
+import { BrowserRouter } from 'react-router-dom'
+import Header from './layout/Header'
+import PageContent from './layout/PageContent'
+import Footer from './layout/Footer'
+
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <h1 className="text-3xl font-bold text-purple-600">
-        SB-ecom projesi hazır!
-      </h1>
-    </div>
+    <BrowserRouter>
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <PageContent />
+        <Footer />
+      </div>
+    </BrowserRouter>
   )
 }
 
