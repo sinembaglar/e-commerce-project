@@ -65,13 +65,13 @@ function Header() {
             <Link to="/" className="text-base font-bold text-neutral-500 hover:text-slate-900">
               Home
             </Link>
-            <button
-              type="button"
-              className="flex items-center gap-1 text-base font-bold text-slate-900"
+            <Link
+              to="/shop"
+              className="flex items-center gap-1 text-base font-bold text-neutral-500 hover:text-slate-900"
             >
-              Category
+              Shop
               <ChevronDown size={16} />
-            </button>
+            </Link>
             {navItems.slice(1).map((item) => (
               <Link
                 key={item.path}
@@ -119,7 +119,13 @@ function Header() {
           <Link to="/" className="text-sm text-neutral-500" onClick={() => setMenuOpen(false)}>
             Home
           </Link>
-          <span className="text-sm text-neutral-500">Category</span>
+          <Link
+            to="/shop"
+            className="text-sm text-neutral-500"
+            onClick={() => setMenuOpen(false)}
+          >
+            Shop
+          </Link>
           {navItems.slice(1).map((item) => (
             <Link
               key={item.path}
