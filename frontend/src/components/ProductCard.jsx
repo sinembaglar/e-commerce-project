@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import ss2Img from '../assets/imgs/ss2.png'
 
 const colorClasses = {
@@ -7,9 +8,9 @@ const colorClasses = {
   black: 'bg-slate-900',
 }
 
-function ProductCard({ name, category, originalPrice, salePrice, colors = [] }) {
+function ProductCard({ id, name, category, originalPrice, salePrice, colors = [] }) {
   return (
-    <div className="flex flex-col items-center gap-1 text-center">
+    <Link to={`/product/${id}`} className="flex flex-col items-center gap-1 text-center">
       <div className="flex aspect-[3/4] w-full overflow-hidden">
         <img src={ss2Img} alt={name} className="h-full w-full object-cover" />
       </div>
@@ -24,7 +25,7 @@ function ProductCard({ name, category, originalPrice, salePrice, colors = [] }) 
           <span key={color} className={`h-3 w-3 rounded-full ${colorClasses[color]}`} />
         ))}
       </div>
-    </div>
+    </Link>
   )
 }
 
