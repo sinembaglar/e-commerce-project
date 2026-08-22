@@ -22,6 +22,7 @@ const navItems = [
   { label: 'About', path: '/about' },
   { label: 'Blog', path: '/blog' },
   { label: 'Contact', path: '/contact' },
+  { label: 'Team', path: '/team' },
   { label: 'Pages', path: '/pages' },
 ]
 

@@ -3,6 +3,7 @@ import HomePage from '../pages/HomePage'
 import ShopPage from '../pages/ShopPage'
 import ProductDetailPage from '../pages/ProductDetailPage'
 import ContactPage from '../pages/ContactPage'
+import TeamPage from '../pages/TeamPage'
 
 function PageContent() {
   return (
@@ -12,6 +13,7 @@ function PageContent() {
         <Route exact path="/shop" component={ShopPage} />
         <Route exact path="/product/:id" component={ProductDetailPage} />
         <Route exact path="/contact" component={ContactPage} />
+        <Route exact path="/team" component={TeamPage} />
       </Switch>
     </main>
   )
