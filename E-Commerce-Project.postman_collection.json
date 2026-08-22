@@ -69,6 +69,25 @@
             },
             "description": "Registers a Store user (role_id: 2). Requires the nested `store` object with name, phone, tax_no and bank_account.\n\nResponse 201:\n{\"message\":\"User created. Check your email for activation instructions.\"}\n\nNote: sending an extra field, a renamed field, or a missing required field returns a backend error."
           }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@commerce.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["login"]
+            },
+            "description": "Logs in an existing user. Public test accounts (password: 123456): customer@commerce.com, store@commerce.com, admin@commerce.com.\n\nResponse 200:\n{\"token\":\"<jwt>\",\"name\":\"Cust Omer\",\"email\":\"customer@commerce.com\",\"role_id\":\"3\"}\n\nResponse 401 (wrong password):\n{\"message\":\"Password is not correct!\"}\n\nResponse 401 (unknown email):\n{\"message\":\"There is no any account using the email: ...\"}"
+          }
         }
       ]
     }

@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import {
   Menu,
   X,
@@ -17,6 +18,7 @@ import {
   TwitterIcon,
   YoutubeIcon,
 } from '../components/icons/FeatherIcons'
+import { getGravatarUrl } from '../utils/gravatar'
 const navItems = [
   { label: 'Home', path: '/' },
   { label: 'About', path: '/about' },
@@ -25,6 +27,34 @@ const navItems = [
   { label: 'Team', path: '/team' },
   { label: 'Pages', path: '/pages' },
 ]
+
+function AuthStatus({ className = '' }) {
+  const user = useSelector((state) => state.client.user)
+  const location = useLocation()
+
+  if (user?.email) {
+    return (
+      <span className={`flex items-center gap-2 font-bold text-slate-900 ${className}`}>
+        <img
+          src={getGravatarUrl(user.email, 32)}
+          alt={user.name}
+          className="h-6 w-6 rounded-full"
+        />
+        {user.name}
+      </span>
+    )
+  }
+
+  return (
+    <Link
+      to={{ pathname: '/login', state: { from: location } }}
+      className={`flex items-center gap-2 font-bold text-sky-500 ${className}`}
+    >
+      <User size={16} />
+      Login / Register
+    </Link>
+  )
+}
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -86,10 +116,7 @@ function Header() {
         </div>
 
         <div className="hidden items-center gap-6 lg:flex">
-          <span className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold text-sky-500">
-            <User size={16} />
-            Login / Register
-          </span>
+          <AuthStatus className="rounded-full px-4 py-2 text-sm" />
           <Search size={20} className="text-sky-500" />
           <span className="relative flex">
             <ShoppingCart size={20} className="text-sky-500" />
@@ -137,15 +164,9 @@ function Header() {
               {item.label}
             </Link>
           ))}
-          <span className="flex items-center gap-2 text-sm font-bold text-sky-500">
-            <User size={16} />
-            Login / Register
-          </span>
+          <AuthStatus className="text-sm" />
         </nav>
       )}
-
-      
-      
     </header>
   )
 }

@@ -23,3 +23,13 @@ export const fetchRolesIfNeeded = () => (dispatch, getState) => {
     dispatch(setRoles(data))
   })
 }
+
+// Thunk: logs in, stores the user on the client reducer, and remembers the
+// token in localStorage when the user opted in.
+export const login = (email, password, rememberMe) => (dispatch) => {
+  return api.post('/login', { email, password }).then(({ data }) => {
+    dispatch(setUser(data))
+    if (rememberMe) localStorage.setItem('token', data.token)
+    return data
+  })
+}

@@ -6,6 +6,7 @@ import ContactPage from '../pages/ContactPage'
 import TeamPage from '../pages/TeamPage'
 import AboutPage from '../pages/AboutPage'
 import SignupPage from '../pages/SignupPage'
+import LoginPage from '../pages/LoginPage'
 
 function PageContent() {
   return (
@@ -18,6 +19,7 @@ function PageContent() {
         <Route exact path="/team" component={TeamPage} />
         <Route exact path="/about" component={AboutPage} />
         <Route exact path="/signup" component={SignupPage} />
+        <Route exact path="/login" component={LoginPage} />
       </Switch>
     </main>
   )
