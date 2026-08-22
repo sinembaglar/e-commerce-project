@@ -1,12 +1,20 @@
 import { useEffect } from 'react'
 import { BrowserRouter } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Header from './layout/Header'
 import PageContent from './layout/PageContent'
 import Footer from './layout/Footer'
+import { verifyToken } from './redux/actions/clientActions'
 
 function App() {
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(verifyToken())
+  }, [dispatch])
+
   useEffect(() => {
     const timer = setTimeout(() => {
       const flashMessage = sessionStorage.getItem('flashMessage')

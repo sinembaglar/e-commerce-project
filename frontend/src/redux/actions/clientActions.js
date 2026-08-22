@@ -1,4 +1,4 @@
-import api from '../../api/axios'
+import api, { setAuthToken, clearAuthToken } from '../../api/axios'
 
 export const SET_USER = 'client/setUser'
 export const SET_ROLES = 'client/setRoles'
@@ -29,7 +29,29 @@ export const fetchRolesIfNeeded = () => (dispatch, getState) => {
 export const login = (email, password, rememberMe) => (dispatch) => {
   return api.post('/login', { email, password }).then(({ data }) => {
     dispatch(setUser(data))
+    setAuthToken(data.token)
     if (rememberMe) localStorage.setItem('token', data.token)
     return data
   })
+}
+
+// Thunk: on app start, if a token was remembered in localStorage, verify it
+// with the backend and restore the session; otherwise clean up a stale token.
+export const verifyToken = () => (dispatch) => {
+  const token = localStorage.getItem('token')
+  if (!token) return Promise.resolve()
+
+  setAuthToken(token)
+
+  return api
+    .get('/verify')
+    .then(({ data }) => {
+      dispatch(setUser(data))
+      localStorage.setItem('token', data.token)
+      setAuthToken(data.token)
+    })
+    .catch(() => {
+      localStorage.removeItem('token')
+      clearAuthToken()
+    })
 }

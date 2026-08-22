@@ -8,6 +8,11 @@
     {
       "key": "baseUrl",
       "value": "https://workintech-fe-ecommerce.onrender.com"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "description": "Paste a token from a Login/Sign Up response here to use the Verify Token request"
     }
   ],
   "item": [
@@ -87,6 +92,21 @@
               "path": ["login"]
             },
             "description": "Logs in an existing user. Public test accounts (password: 123456): customer@commerce.com, store@commerce.com, admin@commerce.com.\n\nResponse 200:\n{\"token\":\"<jwt>\",\"name\":\"Cust Omer\",\"email\":\"customer@commerce.com\",\"role_id\":\"3\"}\n\nResponse 401 (wrong password):\n{\"message\":\"Password is not correct!\"}\n\nResponse 401 (unknown email):\n{\"message\":\"There is no any account using the email: ...\"}"
+          }
+        },
+        {
+          "name": "Verify Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "description": "Raw token, no \"Bearer \" prefix" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/verify",
+              "host": ["{{baseUrl}}"],
+              "path": ["verify"]
+            },
+            "description": "Verifies a token saved from a previous login/signup and restores the session (auto-login). The Authorization header must be the raw token, NOT prefixed with \"Bearer \".\n\nResponse 200:\n{\"name\":\"Cust Omer\",\"email\":\"customer@commerce.com\",\"role_id\":\"3\",\"token\":\"<renewed jwt>\"}\nNote the response includes a renewed token — replace the stored one with it.\n\nResponse 401 (invalid/expired token):\n{\"message\":\"Not verified\"}\n\nResponse 401 (no Authorization header):\n{\"message\":\"No token\"}"
           }
         }
       ]
