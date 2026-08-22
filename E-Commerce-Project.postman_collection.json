@@ -1,0 +1,76 @@
+{
+  "info": {
+    "name": "E-Commerce Project",
+    "description": "API collection for the SB Atelier e-commerce frontend. Extend this collection as new endpoints are integrated (T08+).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://workintech-fe-ecommerce.onrender.com"
+    }
+  ],
+  "item": [
+    {
+      "name": "Roles",
+      "item": [
+        {
+          "name": "Get Roles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/roles",
+              "host": ["{{baseUrl}}"],
+              "path": ["roles"]
+            },
+            "description": "Returns the list of available roles used to populate the role selection box on the Sign Up form.\n\nResponse 200:\n[{\"id\":1,\"name\":\"Yönetici\",\"code\":\"admin\"},{\"id\":2,\"name\":\"Mağaza\",\"code\":\"store\"},{\"id\":3,\"name\":\"Müşteri\",\"code\":\"customer\"}]"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Sign Up - Customer/Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test.user@example.com\",\n  \"password\": \"Test1234!\",\n  \"role_id\": 3\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["signup"]
+            },
+            "description": "Registers a Customer (role_id: 3) or Admin (role_id: 1) user.\n\nResponse 201:\n{\"message\":\"User created. Check your email for activation instructions.\"}\n\nResponse 500 (duplicate email/name):\n{\"error\":\"An error occurred\",\"err\":{\"errno\":19,\"code\":\"SQLITE_CONSTRAINT\"}}"
+          }
+        },
+        {
+          "name": "Sign Up - Store",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Store Owner\",\n  \"email\": \"store.owner@example.com\",\n  \"password\": \"Test1234!\",\n  \"role_id\": 2,\n  \"store\": {\n    \"name\": \"My Store\",\n    \"phone\": \"+905551234567\",\n    \"tax_no\": \"T1234V123456\",\n    \"bank_account\": \"TR330006100519786457841326\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["signup"]
+            },
+            "description": "Registers a Store user (role_id: 2). Requires the nested `store` object with name, phone, tax_no and bank_account.\n\nResponse 201:\n{\"message\":\"User created. Check your email for activation instructions.\"}\n\nNote: sending an extra field, a renamed field, or a missing required field returns a backend error."
+          }
+        }
+      ]
+    }
+  ]
+}
