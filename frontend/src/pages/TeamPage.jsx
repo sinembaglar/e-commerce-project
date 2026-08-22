@@ -1,6 +1,6 @@
 const teamMembers = [
   { name: 'Gökhan Özdemir', role: 'Project Manager' },
-  { name: 'Sinem Bağlar Örs', role: 'Full Stack Developer' },
+  { name: 'Sinem Bağlar', role: 'Full Stack Developer' },
   { name: 'Serhat Han', role: 'Frontend Developer' },
   { name: 'Yaren', role: 'Sales' },
 ]
@@ -17,10 +17,6 @@ function TeamPage() {
       <section className="py-8">
         <div className="container mx-auto flex flex-col items-center gap-3 px-4 text-center lg:px-10">
           <h1 className="text-2xl font-bold text-slate-900">Meet Our Team</h1>
-          <p className="max-w-md text-sm text-neutral-500">
-            The people behind SB Atelier, working together to bring you the best shopping
-            experience.
-          </p>
         </div>
       </section>
 
