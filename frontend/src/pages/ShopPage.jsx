@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 import { LayoutGrid, List, Loader2 } from 'lucide-react'
-import { fetchProducts } from '../redux/actions/productActions'
+import { fetchProducts, setFilter, setSort } from '../redux/actions/productActions'
 
 function getCategoryPath(category) {
   const genderWord = category.gender === 'k' ? 'kadin' : 'erkek'
@@ -21,14 +21,16 @@ function ShopPage() {
   const productList = useSelector((state) => state.product.productList)
   const total = useSelector((state) => state.product.total)
   const fetchState = useSelector((state) => state.product.fetchState)
+  const filter = useSelector((state) => state.product.filter)
+  const sort = useSelector((state) => state.product.sort)
   const params = useParams()
   const activeCategory = params.categoryId
     ? categories.find((category) => String(category.id) === params.categoryId)
     : null
 
   useEffect(() => {
-    dispatch(fetchProducts())
-  }, [dispatch])
+    dispatch(fetchProducts({ category: params.categoryId, filter, sort }))
+  }, [dispatch, params.categoryId, filter, sort])
 
   return (
     <div className="flex flex-col">
@@ -82,15 +84,24 @@ function ShopPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <select className="border border-neutral-300 bg-white px-3 py-2 text-sm text-slate-900">
-              <option>Popularity</option>
-            </select>
-            <button
-              type="button"
-              className="bg-sky-500 px-6 py-2 text-sm font-bold text-white"
+            <input
+              type="text"
+              value={filter}
+              onChange={(e) => dispatch(setFilter(e.target.value))}
+              placeholder="Search products..."
+              className="border border-neutral-300 bg-white px-3 py-2 text-sm text-slate-900"
+            />
+            <select
+              value={sort}
+              onChange={(e) => dispatch(setSort(e.target.value))}
+              className="border border-neutral-300 bg-white px-3 py-2 text-sm text-slate-900"
             >
-              Filter
-            </button>
+              <option value="">Sort by</option>
+              <option value="price:asc">Price: Low to High</option>
+              <option value="price:desc">Price: High to Low</option>
+              <option value="rating:asc">Rating: Low to High</option>
+              <option value="rating:desc">Rating: High to Low</option>
+            </select>
           </div>
         </div>
       </section>

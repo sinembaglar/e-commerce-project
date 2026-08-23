@@ -47,7 +47,25 @@
               "host": ["{{baseUrl}}"],
               "path": ["products"]
             },
-            "description": "Returns a page of products, used to populate the Shop page grid.\n\nResponse 200:\n{\"total\":587,\"products\":[{\"id\":2,\"name\":\"Siyah %100 Pamuk\",\"description\":\"...\",\"price\":145.99,\"stock\":84,\"store_id\":1,\"category_id\":1,\"rating\":0.35,\"sell_count\":923,\"images\":[{\"url\":\"<cdn url>\",\"index\":0}]}, ...]}\n\nDefaults to 25 products. Supports ?limit=&offset=&filter=&category= query params for pagination/search/category filtering (not wired into the UI yet)."
+            "description": "Returns a page of products, used to populate the Shop page grid.\n\nResponse 200:\n{\"total\":587,\"products\":[{\"id\":2,\"name\":\"Siyah %100 Pamuk\",\"description\":\"...\",\"price\":145.99,\"stock\":84,\"store_id\":1,\"category_id\":1,\"rating\":0.35,\"sell_count\":923,\"images\":[{\"url\":\"<cdn url>\",\"index\":0}]}, ...]}\n\nDefaults to 25 products. Supports ?limit=&offset=&filter=&category=&sort= query params."
+          }
+        },
+        {
+          "name": "Get Products - Category + Filter + Sort",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products?category=2&filter=siyah&sort=price:desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["products"],
+              "query": [
+                { "key": "category", "value": "2" },
+                { "key": "filter", "value": "siyah" },
+                { "key": "sort", "value": "price:desc" }
+              ]
+            },
+            "description": "Same endpoint as Get Products, showing how category/filter/sort combine. All three params are optional and independent - whichever ones are present are applied together.\n\nsort accepts: price:asc, price:desc, rating:asc, rating:desc.\n\nOn the Shop page, changing any one of category (via URL), filter (text input) or sort (select) re-fetches with all currently-set params kept."
           }
         }
       ]

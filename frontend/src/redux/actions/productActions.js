@@ -7,6 +7,7 @@ export const SET_FETCH_STATE = 'product/setFetchState'
 export const SET_LIMIT = 'product/setLimit'
 export const SET_OFFSET = 'product/setOffset'
 export const SET_FILTER = 'product/setFilter'
+export const SET_SORT = 'product/setSort'
 
 export const setCategories = (categories) => ({ type: SET_CATEGORIES, payload: categories })
 export const setProductList = (productList) => ({ type: SET_PRODUCT_LIST, payload: productList })
@@ -15,6 +16,7 @@ export const setFetchState = (fetchState) => ({ type: SET_FETCH_STATE, payload: 
 export const setLimit = (limit) => ({ type: SET_LIMIT, payload: limit })
 export const setOffset = (offset) => ({ type: SET_OFFSET, payload: offset })
 export const setFilter = (filter) => ({ type: SET_FILTER, payload: filter })
+export const setSort = (sort) => ({ type: SET_SORT, payload: sort })
 
 // Thunk: fetches all categories and stores them.
 export const fetchCategories = () => (dispatch) => {
@@ -24,12 +26,19 @@ export const fetchCategories = () => (dispatch) => {
 }
 
 // Thunk: fetches products and stores them, tracking loading state so the UI
-// can show a spinner.
-export const fetchProducts = () => (dispatch) => {
+// can show a spinner. category/filter/sort are optional query parameters -
+// only the ones that have a value are sent, and the others stay as they were.
+export const fetchProducts = ({ category, filter, sort } = {}) => (dispatch) => {
   dispatch(setFetchState('FETCHING'))
 
+  const queryParts = []
+  if (category) queryParts.push(`category=${category}`)
+  if (filter) queryParts.push(`filter=${encodeURIComponent(filter)}`)
+  if (sort) queryParts.push(`sort=${sort}`)
+  const query = queryParts.length > 0 ? `?${queryParts.join('&')}` : ''
+
   return api
-    .get('/products')
+    .get(`/products${query}`)
     .then(({ data }) => {
       dispatch(setTotal(data.total))
       dispatch(setProductList(data.products))
