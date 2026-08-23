@@ -22,3 +22,20 @@ export const fetchCategories = () => (dispatch) => {
     dispatch(setCategories(data))
   })
 }
+
+// Thunk: fetches products and stores them, tracking loading state so the UI
+// can show a spinner.
+export const fetchProducts = () => (dispatch) => {
+  dispatch(setFetchState('FETCHING'))
+
+  return api
+    .get('/products')
+    .then(({ data }) => {
+      dispatch(setTotal(data.total))
+      dispatch(setProductList(data.products))
+      dispatch(setFetchState('FETCHED'))
+    })
+    .catch(() => {
+      dispatch(setFetchState('FAILED'))
+    })
+}

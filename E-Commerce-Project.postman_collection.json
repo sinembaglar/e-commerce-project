@@ -35,6 +35,24 @@
       ]
     },
     {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["products"]
+            },
+            "description": "Returns a page of products, used to populate the Shop page grid.\n\nResponse 200:\n{\"total\":587,\"products\":[{\"id\":2,\"name\":\"Siyah %100 Pamuk\",\"description\":\"...\",\"price\":145.99,\"stock\":84,\"store_id\":1,\"category_id\":1,\"rating\":0.35,\"sell_count\":923,\"images\":[{\"url\":\"<cdn url>\",\"index\":0}]}, ...]}\n\nDefaults to 25 products. Supports ?limit=&offset=&filter=&category= query params for pagination/search/category filtering (not wired into the UI yet)."
+          }
+        }
+      ]
+    },
+    {
       "name": "Roles",
       "item": [
         {
