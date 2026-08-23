@@ -18,14 +18,11 @@ function App() {
   }, [dispatch])
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const flashMessage = sessionStorage.getItem('flashMessage')
-      if (flashMessage) {
-        sessionStorage.removeItem('flashMessage')
-        toast.success(flashMessage)
-      }
-    }, 0)
-    return () => clearTimeout(timer)
+    const flashMessage = sessionStorage.getItem('flashMessage')
+    if (flashMessage) {
+      sessionStorage.removeItem('flashMessage')
+      toast.success(flashMessage)
+    }
   }, [])
 
   return (

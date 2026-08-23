@@ -3,7 +3,12 @@ import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 import { LayoutGrid, List } from 'lucide-react'
 import ProductCard from '../components/ProductCard'
-import { getCategoryPath } from '../utils/category'
+
+function getCategoryPath(category) {
+  const genderWord = category.gender === 'k' ? 'kadin' : 'erkek'
+  const categoryName = category.code.split(':')[1]
+  return `/shop/${genderWord}/${categoryName}/${category.id}`
+}
 
 const brands = ['hooli', 'Lyft', 'stripe', 'aws', 'reddit']
 

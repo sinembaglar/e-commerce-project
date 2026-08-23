@@ -16,11 +16,8 @@ export const setLimit = (limit) => ({ type: SET_LIMIT, payload: limit })
 export const setOffset = (offset) => ({ type: SET_OFFSET, payload: offset })
 export const setFilter = (filter) => ({ type: SET_FILTER, payload: filter })
 
-// Thunk: only hits the API if categories aren't already in the store.
-export const fetchCategories = () => (dispatch, getState) => {
-  const { product } = getState()
-  if (product.categories.length > 0) return Promise.resolve()
-
+// Thunk: fetches all categories and stores them.
+export const fetchCategories = () => (dispatch) => {
   return api.get('/categories').then(({ data }) => {
     dispatch(setCategories(data))
   })

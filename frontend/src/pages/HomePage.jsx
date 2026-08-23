@@ -14,7 +14,12 @@ import ProductCard from '../components/ProductCard'
 import Slider from '../components/Slider'
 import sliderImg from '../assets/imgs/slider.png'
 import ss2Img from '../assets/imgs/ss2.png'
-import { getCategoryPath } from '../utils/category'
+
+function getCategoryPath(category) {
+  const genderWord = category.gender === 'k' ? 'kadin' : 'erkek'
+  const categoryName = category.code.split(':')[1]
+  return `/shop/${genderWord}/${categoryName}/${category.id}`
+}
 
 const brands = ['hooli', 'Lyft', 'stripe', 'aws', 'reddit']
 

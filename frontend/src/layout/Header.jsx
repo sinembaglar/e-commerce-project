@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import md5 from 'blueimp-md5'
 import {
   Menu,
   X,
@@ -18,8 +19,6 @@ import {
   TwitterIcon,
   YoutubeIcon,
 } from '../components/icons/FeatherIcons'
-import { getGravatarUrl } from '../utils/gravatar'
-import { getCategoryPath } from '../utils/category'
 
 const GENDER_GROUPS = [
   { gender: 'k', label: 'Kadın' },
@@ -35,18 +34,22 @@ const navItems = [
   { label: 'Pages', path: '/pages' },
 ]
 
+function getCategoryPath(category) {
+  const genderWord = category.gender === 'k' ? 'kadin' : 'erkek'
+  const categoryName = category.code.split(':')[1]
+  return `/shop/${genderWord}/${categoryName}/${category.id}`
+}
+
 function AuthStatus({ className = '' }) {
   const user = useSelector((state) => state.client.user)
-  const location = useLocation()
 
   if (user?.email) {
+    const hash = md5(user.email.trim().toLowerCase())
+    const avatarUrl = `https://www.gravatar.com/avatar/${hash}?d=identicon&s=32`
+
     return (
       <span className={`flex items-center gap-2 font-bold text-slate-900 ${className}`}>
-        <img
-          src={getGravatarUrl(user.email, 32)}
-          alt={user.name}
-          className="h-6 w-6 rounded-full"
-        />
+        <img src={avatarUrl} alt={user.name} className="h-6 w-6 rounded-full" />
         {user.name}
       </span>
     )
@@ -54,7 +57,7 @@ function AuthStatus({ className = '' }) {
 
   return (
     <Link
-      to={{ pathname: '/login', state: { from: location } }}
+      to="/login"
       className={`flex items-center gap-2 font-bold text-sky-500 ${className}`}
     >
       <User size={16} />
@@ -64,20 +67,22 @@ function AuthStatus({ className = '' }) {
 }
 
 function ShopDropdown() {
+  const [open, setOpen] = useState(false)
   const categories = useSelector((state) => state.product.categories)
 
   return (
-    <div className="group relative flex items-center">
-      <Link
-        to="/shop"
+    <div className="relative flex items-center">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
         className="flex items-center gap-1 text-base font-bold text-neutral-500 hover:text-slate-900"
       >
         Shop
         <ChevronDown size={16} />
-      </Link>
+      </button>
 
-      {categories.length > 0 && (
-        <div className="invisible absolute left-0 top-full z-20 flex gap-8 border border-neutral-200 bg-white p-6 opacity-0 shadow-lg transition-opacity group-hover:visible group-hover:opacity-100">
+      {open && categories.length > 0 && (
+        <div className="absolute left-0 top-full z-20 flex gap-8 border border-neutral-200 bg-white p-6 shadow-lg">
           {GENDER_GROUPS.map(({ gender, label }) => (
             <div key={gender} className="flex flex-col gap-2">
               <span className="text-xs font-bold uppercase tracking-widest text-neutral-400">
@@ -89,6 +94,7 @@ function ShopDropdown() {
                   <Link
                     key={category.id}
                     to={getCategoryPath(category)}
+                    onClick={() => setOpen(false)}
                     className="text-sm text-neutral-600 hover:text-sky-500"
                   >
                     {category.title}

@@ -14,16 +14,6 @@ export const setLanguage = (language) => ({ type: SET_LANGUAGE, payload: languag
 export const setAddressList = (addressList) => ({ type: SET_ADDRESS_LIST, payload: addressList })
 export const setCreditCards = (creditCards) => ({ type: SET_CREDIT_CARDS, payload: creditCards })
 
-// Thunk: only hits the API if roles aren't already in the store.
-export const fetchRolesIfNeeded = () => (dispatch, getState) => {
-  const { client } = getState()
-  if (client.roles.length > 0) return Promise.resolve()
-
-  return api.get('/roles').then(({ data }) => {
-    dispatch(setRoles(data))
-  })
-}
-
 // Thunk: logs in, stores the user on the client reducer, and remembers the
 // token in localStorage when the user opted in.
 export const login = (email, password, rememberMe) => (dispatch) => {

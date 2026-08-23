@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import api from '../api/axios'
@@ -17,28 +17,26 @@ const errorClass = 'text-xs text-red-500'
 function SignupPage() {
   const history = useHistory()
   const [roles, setRoles] = useState([])
+  const [roleId, setRoleId] = useState('')
   const [submitError, setSubmitError] = useState('')
 
   const {
     register,
     handleSubmit,
     watch,
-    control,
-    setValue,
     formState: { errors, isSubmitting },
-  } = useForm({ defaultValues: { role_id: '' } })
+  } = useForm()
 
-  const selectedRoleId = watch('role_id')
-  const selectedRole = roles.find((role) => String(role.id) === String(selectedRoleId))
+  const selectedRole = roles.find((role) => String(role.id) === roleId)
   const isStore = selectedRole?.code === 'store'
 
   useEffect(() => {
     api.get('/roles').then(({ data }) => {
       setRoles(data)
       const customerRole = data.find((role) => role.code === 'customer')
-      if (customerRole) setValue('role_id', String(customerRole.id))
+      if (customerRole) setRoleId(String(customerRole.id))
     })
-  }, [setValue])
+  }, [])
 
   const onSubmit = async (formData) => {
     setSubmitError('')
@@ -48,7 +46,7 @@ function SignupPage() {
           name: formData.name,
           email: formData.email,
           password: formData.password,
-          role_id: Number(formData.role_id),
+          role_id: Number(roleId),
           store: {
             name: formData.storeName,
             phone: formData.storePhone,
@@ -60,7 +58,7 @@ function SignupPage() {
           name: formData.name,
           email: formData.email,
           password: formData.password,
-          role_id: Number(formData.role_id),
+          role_id: Number(roleId),
         }
 
     try {
@@ -156,20 +154,17 @@ function SignupPage() {
             </div>
 
             <div className="flex flex-col gap-1">
-              <Controller
-                name="role_id"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <select {...field} className={inputClass}>
-                    {roles.map((role) => (
-                      <option key={role.id} value={role.id}>
-                        {role.name}
-                      </option>
-                    ))}
-                  </select>
-                )}
-              />
+              <select
+                value={roleId}
+                onChange={(e) => setRoleId(e.target.value)}
+                className={inputClass}
+              >
+                {roles.map((role) => (
+                  <option key={role.id} value={role.id}>
+                    {role.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {isStore && (

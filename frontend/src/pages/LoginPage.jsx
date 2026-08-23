@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
-import { useHistory, useLocation, Link } from 'react-router-dom'
+import { useHistory, Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { Loader2 } from 'lucide-react'
 import { login } from '../redux/actions/clientActions'
@@ -13,8 +13,6 @@ const errorClass = 'text-xs text-red-500'
 function LoginPage() {
   const dispatch = useDispatch()
   const history = useHistory()
-  const location = useLocation()
-  const from = location.state?.from || '/'
 
   const {
     register,
@@ -25,7 +23,13 @@ function LoginPage() {
   const onSubmit = async ({ email, password, rememberMe }) => {
     try {
       await dispatch(login(email, password, rememberMe))
-      history.push(from)
+      // If we got here from another page in the app, go back to it.
+      // Otherwise (e.g. typed the URL directly), just go home.
+      if (history.length > 2) {
+        history.goBack()
+      } else {
+        history.push('/')
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Login failed, please try again.')
     }
