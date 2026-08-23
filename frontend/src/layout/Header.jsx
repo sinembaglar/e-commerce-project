@@ -19,6 +19,13 @@ import {
   YoutubeIcon,
 } from '../components/icons/FeatherIcons'
 import { getGravatarUrl } from '../utils/gravatar'
+import { getCategoryPath } from '../utils/category'
+
+const GENDER_GROUPS = [
+  { gender: 'k', label: 'Kadın' },
+  { gender: 'e', label: 'Erkek' },
+]
+
 const navItems = [
   { label: 'Home', path: '/' },
   { label: 'About', path: '/about' },
@@ -53,6 +60,45 @@ function AuthStatus({ className = '' }) {
       <User size={16} />
       Login / Register
     </Link>
+  )
+}
+
+function ShopDropdown() {
+  const categories = useSelector((state) => state.product.categories)
+
+  return (
+    <div className="group relative flex items-center">
+      <Link
+        to="/shop"
+        className="flex items-center gap-1 text-base font-bold text-neutral-500 hover:text-slate-900"
+      >
+        Shop
+        <ChevronDown size={16} />
+      </Link>
+
+      {categories.length > 0 && (
+        <div className="invisible absolute left-0 top-full z-20 flex gap-8 border border-neutral-200 bg-white p-6 opacity-0 shadow-lg transition-opacity group-hover:visible group-hover:opacity-100">
+          {GENDER_GROUPS.map(({ gender, label }) => (
+            <div key={gender} className="flex flex-col gap-2">
+              <span className="text-xs font-bold uppercase tracking-widest text-neutral-400">
+                {label}
+              </span>
+              {categories
+                .filter((category) => category.gender === gender)
+                .map((category) => (
+                  <Link
+                    key={category.id}
+                    to={getCategoryPath(category)}
+                    className="text-sm text-neutral-600 hover:text-sky-500"
+                  >
+                    {category.title}
+                  </Link>
+                ))}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -96,13 +142,7 @@ function Header() {
             <Link to="/" className="text-base font-bold text-neutral-500 hover:text-slate-900">
               Home
             </Link>
-            <Link
-              to="/shop"
-              className="flex items-center gap-1 text-base font-bold text-neutral-500 hover:text-slate-900"
-            >
-              Shop
-              <ChevronDown size={16} />
-            </Link>
+            <ShopDropdown />
             {navItems.slice(1).map((item) => (
               <Link
                 key={item.path}

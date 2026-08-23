@@ -1,17 +1,11 @@
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { Link, useParams } from 'react-router-dom'
 import { LayoutGrid, List } from 'lucide-react'
 import ProductCard from '../components/ProductCard'
-import ss2Img from '../assets/imgs/ss2.png'
+import { getCategoryPath } from '../utils/category'
 
 const brands = ['hooli', 'Lyft', 'stripe', 'aws', 'reddit']
-
-const categories = [
-  { name: 'Cloths', items: 5, color: 'bg-slate-800' },
-  { name: 'Cloths', items: 5, color: 'bg-teal-600' },
-  { name: 'Cloths', items: 5, color: 'bg-rose-300' },
-  { name: 'Cloths', items: 5, color: 'bg-pink-400' },
-  { name: 'Cloths', items: 5, color: 'bg-pink-300' },
-]
 
 const product = {
   name: 'Graphic Design',
@@ -27,27 +21,36 @@ const pageNumbers = [1, 2, 3]
 
 function ShopPage() {
   const [activePage, setActivePage] = useState(1)
+  const categories = useSelector((state) => state.product.categories)
+  const params = useParams()
+  const activeCategory = params.categoryId
+    ? categories.find((category) => String(category.id) === params.categoryId)
+    : null
 
   return (
     <div className="flex flex-col">
       <section className="py-8">
         <div className="container mx-auto px-4 lg:px-10">
-          <div className="flex flex-col gap-4 lg:flex-row">
-            {categories.map((category, index) => (
-              <div
-                key={index}
-                className={`relative flex aspect-[4/5] flex-1 items-center justify-center overflow-hidden ${category.color}`}
+          {activeCategory && (
+            <h1 className="mb-4 text-xl font-bold text-slate-900">{activeCategory.title}</h1>
+          )}
+          <div className="flex flex-wrap gap-4">
+            {categories.map((category) => (
+              <Link
+                key={category.id}
+                to={getCategoryPath(category)}
+                className="group relative flex aspect-[4/5] basis-[calc(50%-8px)] items-center justify-center overflow-hidden lg:basis-[calc(20%-13px)]"
               >
                 <img
-                  src={ss2Img}
+                  src={category.img}
                   alt=""
-                  className="absolute inset-0 h-full w-full object-cover opacity-60"
+                  className="absolute inset-0 h-full w-full object-cover transition-transform group-hover:scale-105"
                 />
+                <div className="absolute inset-0 bg-black/30" />
                 <div className="relative flex flex-col items-center gap-1 text-center text-white">
-                  <span className="text-lg font-bold uppercase">{category.name}</span>
-                  <span className="text-sm">{category.items} items</span>
+                  <span className="text-lg font-bold uppercase">{category.title}</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

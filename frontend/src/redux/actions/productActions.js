@@ -1,3 +1,5 @@
+import api from '../../api/axios'
+
 export const SET_CATEGORIES = 'product/setCategories'
 export const SET_PRODUCT_LIST = 'product/setProductList'
 export const SET_TOTAL = 'product/setTotal'
@@ -13,3 +15,13 @@ export const setFetchState = (fetchState) => ({ type: SET_FETCH_STATE, payload: 
 export const setLimit = (limit) => ({ type: SET_LIMIT, payload: limit })
 export const setOffset = (offset) => ({ type: SET_OFFSET, payload: offset })
 export const setFilter = (filter) => ({ type: SET_FILTER, payload: filter })
+
+// Thunk: only hits the API if categories aren't already in the store.
+export const fetchCategories = () => (dispatch, getState) => {
+  const { product } = getState()
+  if (product.categories.length > 0) return Promise.resolve()
+
+  return api.get('/categories').then(({ data }) => {
+    dispatch(setCategories(data))
+  })
+}

@@ -17,6 +17,24 @@
   ],
   "item": [
     {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Get Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories"]
+            },
+            "description": "Returns all product categories, used to populate the Shop dropdown, the homepage top-rated section, and the category tiles on the Shop page.\n\nResponse 200:\n[{\"id\":2,\"code\":\"k:ayakkabi\",\"title\":\"Ayakkabı\",\"img\":\"<url>\",\"rating\":4.9,\"gender\":\"k\"}, ...]\n\ngender is \"k\" (kadın) or \"e\" (erkek). Category links use the pattern /shop/:gender/:categoryName/:categoryId where gender is spelled out (kadin/erkek) and categoryName is the part of `code` after the colon, e.g. id 2 -> /shop/kadin/ayakkabi/2."
+          }
+        }
+      ]
+    },
+    {
       "name": "Roles",
       "item": [
         {

@@ -14,6 +14,7 @@ function PageContent() {
       <Switch>
         <Route exact path="/" component={HomePage} />
         <Route exact path="/shop" component={ShopPage} />
+        <Route exact path="/shop/:gender/:categoryName/:categoryId" component={ShopPage} />
         <Route exact path="/product/:id" component={ProductDetailPage} />
         <Route exact path="/contact" component={ContactPage} />
         <Route exact path="/team" component={TeamPage} />

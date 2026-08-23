@@ -7,12 +7,14 @@ import Header from './layout/Header'
 import PageContent from './layout/PageContent'
 import Footer from './layout/Footer'
 import { verifyToken } from './redux/actions/clientActions'
+import { fetchCategories } from './redux/actions/productActions'
 
 function App() {
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(verifyToken())
+    dispatch(fetchCategories())
   }, [dispatch])
 
   useEffect(() => {

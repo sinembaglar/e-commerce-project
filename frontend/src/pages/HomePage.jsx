@@ -1,3 +1,5 @@
+import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 import {
   Bookmark,
   List,
@@ -12,6 +14,7 @@ import ProductCard from '../components/ProductCard'
 import Slider from '../components/Slider'
 import sliderImg from '../assets/imgs/slider.png'
 import ss2Img from '../assets/imgs/ss2.png'
+import { getCategoryPath } from '../utils/category'
 
 const brands = ['hooli', 'Lyft', 'stripe', 'aws', 'reddit']
 
@@ -157,6 +160,9 @@ function PromoTile({ big = false }) {
 }
 
 function HomePage() {
+  const categories = useSelector((state) => state.product.categories)
+  const topCategories = [...categories].sort((a, b) => b.rating - a.rating).slice(0, 5)
+
   return (
     <div className="flex flex-col">
       <section className="py-6 lg:py-10">
@@ -174,6 +180,42 @@ function HomePage() {
           ))}
         </div>
       </section>
+
+      {topCategories.length > 0 && (
+        <section className="py-8">
+          <div className="container mx-auto flex flex-col gap-6 px-4 lg:px-10">
+            <div className="flex flex-col items-center gap-1 text-center">
+              <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">
+                Top Rated
+              </span>
+              <h2 className="text-xl font-bold uppercase text-slate-900">Shop by Category</h2>
+            </div>
+            <div className="flex flex-wrap justify-center gap-4">
+              {topCategories.map((category) => (
+                <Link
+                  key={category.id}
+                  to={getCategoryPath(category)}
+                  className="group relative flex aspect-square basis-[calc(50%-8px)] items-center justify-center overflow-hidden lg:basis-[calc(20%-13px)]"
+                >
+                  <img
+                    src={category.img}
+                    alt=""
+                    className="absolute inset-0 h-full w-full object-cover transition-transform group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/30" />
+                  <div className="relative flex flex-col items-center gap-1 text-center text-white">
+                    <span className="text-base font-bold uppercase">{category.title}</span>
+                    <span className="flex items-center gap-1 text-xs">
+                      <Star size={12} className="fill-amber-400 text-amber-400" />
+                      {category.rating}
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="py-8">
         <div className="container mx-auto flex flex-col gap-4 px-4 lg:flex-row lg:px-10">
