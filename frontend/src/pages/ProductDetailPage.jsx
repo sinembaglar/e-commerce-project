@@ -10,6 +10,7 @@ import {
   Loader2,
 } from 'lucide-react'
 import { fetchProduct } from '../redux/actions/productActions'
+import { addToCart } from '../redux/actions/shoppingCartActions'
 
 const tabs = [
   { id: 'description', label: 'Description' },
@@ -134,6 +135,7 @@ function ProductDetailPage() {
             <div className="flex items-center gap-3 pt-2">
               <button
                 type="button"
+                onClick={() => dispatch(addToCart(product))}
                 className="bg-sky-500 px-8 py-3 text-sm font-bold text-white"
               >
                 Add to Cart

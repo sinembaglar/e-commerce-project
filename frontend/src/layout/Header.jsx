@@ -108,6 +108,52 @@ function ShopDropdown() {
   )
 }
 
+function CartDropdown() {
+  const [open, setOpen] = useState(false)
+  const cart = useSelector((state) => state.shoppingCart.cart)
+
+  return (
+    <div className="relative flex items-center">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        aria-label="Sepetim"
+        className="relative flex"
+      >
+        <ShoppingCart size={20} className="text-sky-500" />
+        <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-sky-500 text-[10px] text-white">
+          {cart.length}
+        </span>
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full z-20 flex w-80 flex-col gap-3 border border-neutral-200 bg-white p-4 shadow-lg">
+          <span className="text-sm font-bold text-slate-900">Cart ({cart.length} items)</span>
+
+          {cart.length === 0 && (
+            <span className="text-sm text-neutral-500">Your cart is empty.</span>
+          )}
+
+          {cart.map((item) => (
+            <div key={item.product.id} className="flex items-center gap-3">
+              <img
+                src={item.product.images[0]?.url}
+                alt={item.product.name}
+                className="h-14 w-14 object-cover"
+              />
+              <div className="flex flex-1 flex-col">
+                <span className="text-sm font-bold text-slate-900">{item.product.name}</span>
+                <span className="text-xs text-neutral-500">Qty: {item.count}</span>
+              </div>
+              <span className="text-sm font-bold text-teal-700">{item.product.price} TL</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -164,12 +210,7 @@ function Header() {
         <div className="hidden items-center gap-6 lg:flex">
           <AuthStatus className="rounded-full px-4 py-2 text-sm" />
           <Search size={20} className="text-sky-500" />
-          <span className="relative flex">
-            <ShoppingCart size={20} className="text-sky-500" />
-            <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-sky-500 text-[10px] text-white">
-              1
-            </span>
-          </span>
+          <CartDropdown />
           <span className="relative flex">
             <Heart size={20} className="text-sky-500" />
             <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-sky-500 text-[10px] text-white">
