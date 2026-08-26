@@ -2,6 +2,11 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 import { LayoutGrid, List, Loader2 } from 'lucide-react'
+// react-paginate's default export needs unwrapping twice in this project's
+// build setup (Vite double-wraps this specific package's CommonJS export).
+import * as ReactPaginateModule from 'react-paginate'
+
+const ReactPaginate = ReactPaginateModule.default.default
 import {
   fetchProducts,
   setFilter,
@@ -33,7 +38,6 @@ function ShopPage() {
     : null
 
   const totalPages = Math.ceil(total / limit) || 1
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1)
 
   useEffect(() => {
     const offset = (activePage - 1) * limit
@@ -145,34 +149,19 @@ function ShopPage() {
             </div>
           )}
 
-          <div className="flex flex-wrap items-center justify-center gap-2 text-sm font-bold">
-            <button
-              type="button"
-              onClick={() => setActivePage(1)}
-              className="px-3 py-2 text-neutral-500"
-            >
-              First
-            </button>
-            {pageNumbers.map((page) => (
-              <button
-                key={page}
-                type="button"
-                onClick={() => setActivePage(page)}
-                className={`px-3 py-2 ${
-                  page === activePage ? 'bg-sky-500 text-white' : 'text-neutral-500'
-                }`}
-              >
-                {page}
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={() => setActivePage((page) => Math.min(page + 1, totalPages))}
-              className="px-3 py-2 text-neutral-500"
-            >
-              Next
-            </button>
-          </div>
+          <ReactPaginate
+            pageCount={totalPages}
+            forcePage={activePage - 1}
+            onPageChange={({ selected }) => setActivePage(selected + 1)}
+            previousLabel="Previous"
+            nextLabel="Next"
+            containerClassName="flex flex-wrap items-center justify-center gap-2 text-sm font-bold"
+            pageLinkClassName="flex px-3 py-2 text-neutral-500 cursor-pointer"
+            activeLinkClassName="!bg-sky-500 !text-white"
+            previousLinkClassName="flex px-3 py-2 text-neutral-500 cursor-pointer"
+            nextLinkClassName="flex px-3 py-2 text-neutral-500 cursor-pointer"
+            breakLinkClassName="flex px-3 py-2 text-neutral-500"
+          />
         </div>
       </section>
 
