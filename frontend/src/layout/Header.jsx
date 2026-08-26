@@ -128,7 +128,13 @@ function CartDropdown() {
 
       {open && (
         <div className="absolute right-0 top-full z-20 flex w-80 flex-col gap-3 border border-neutral-200 bg-white p-4 shadow-lg">
-          <span className="text-sm font-bold text-slate-900">Cart ({cart.length} items)</span>
+          <Link
+            to="/cart"
+            onClick={() => setOpen(false)}
+            className="text-sm font-bold text-slate-900 hover:text-sky-500"
+          >
+            Cart ({cart.length} items) - View Cart
+          </Link>
 
           {cart.length === 0 && (
             <span className="text-sm text-neutral-500">Your cart is empty.</span>

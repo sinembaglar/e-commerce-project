@@ -19,3 +19,37 @@ export const addToCart = (product) => (dispatch, getState) => {
 
   dispatch(setCart(newCart))
 }
+
+// Thunk: increases a cart item's count by 1.
+export const increaseCartCount = (productId) => (dispatch, getState) => {
+  const { shoppingCart } = getState()
+  const newCart = shoppingCart.cart.map((item) =>
+    item.product.id === productId ? { ...item, count: item.count + 1 } : item
+  )
+  dispatch(setCart(newCart))
+}
+
+// Thunk: decreases a cart item's count by 1, never below 1.
+export const decreaseCartCount = (productId) => (dispatch, getState) => {
+  const { shoppingCart } = getState()
+  const newCart = shoppingCart.cart.map((item) =>
+    item.product.id === productId ? { ...item, count: Math.max(1, item.count - 1) } : item
+  )
+  dispatch(setCart(newCart))
+}
+
+// Thunk: removes a product from the cart entirely.
+export const removeFromCart = (productId) => (dispatch, getState) => {
+  const { shoppingCart } = getState()
+  const newCart = shoppingCart.cart.filter((item) => item.product.id !== productId)
+  dispatch(setCart(newCart))
+}
+
+// Thunk: toggles whether a cart item is checked (included in the order).
+export const toggleCartItemChecked = (productId) => (dispatch, getState) => {
+  const { shoppingCart } = getState()
+  const newCart = shoppingCart.cart.map((item) =>
+    item.product.id === productId ? { ...item, checked: !item.checked } : item
+  )
+  dispatch(setCart(newCart))
+}

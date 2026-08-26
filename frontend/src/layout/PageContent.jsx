@@ -7,6 +7,7 @@ import TeamPage from '../pages/TeamPage'
 import AboutPage from '../pages/AboutPage'
 import SignupPage from '../pages/SignupPage'
 import LoginPage from '../pages/LoginPage'
+import CartPage from '../pages/CartPage'
 
 function PageContent() {
   return (
@@ -26,6 +27,7 @@ function PageContent() {
         <Route exact path="/about" component={AboutPage} />
         <Route exact path="/signup" component={SignupPage} />
         <Route exact path="/login" component={LoginPage} />
+        <Route exact path="/cart" component={CartPage} />
       </Switch>
     </main>
   )
