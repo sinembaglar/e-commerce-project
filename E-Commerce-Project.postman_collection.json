@@ -67,6 +67,23 @@
             },
             "description": "Same endpoint as Get Products, showing how category/filter/sort combine. All three params are optional and independent - whichever ones are present are applied together.\n\nsort accepts: price:asc, price:desc, rating:asc, rating:desc.\n\nOn the Shop page, changing any one of category (via URL), filter (text input) or sort (select) re-fetches with all currently-set params kept."
           }
+        },
+        {
+          "name": "Get Products - Page 2 (Pagination)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products?limit=25&offset=25",
+              "host": ["{{baseUrl}}"],
+              "path": ["products"],
+              "query": [
+                { "key": "limit", "value": "25" },
+                { "key": "offset", "value": "25" }
+              ]
+            },
+            "description": "Pagination via limit/offset. limit defaults to 25 (product count per page), offset is how many products to skip.\n\nPage 1: no offset (or offset=0)\nPage 2: offset=25 (limit * (page-1))\nPage 3: offset=50\n\nOn the Shop page, clicking a page number recomputes offset and re-fetches, keeping any active category/filter/sort."
+          }
         }
       ]
     },

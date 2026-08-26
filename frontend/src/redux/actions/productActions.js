@@ -26,15 +26,17 @@ export const fetchCategories = () => (dispatch) => {
 }
 
 // Thunk: fetches products and stores them, tracking loading state so the UI
-// can show a spinner. category/filter/sort are optional query parameters -
-// only the ones that have a value are sent, and the others stay as they were.
-export const fetchProducts = ({ category, filter, sort } = {}) => (dispatch) => {
+// can show a spinner. category/filter/sort/limit/offset are optional query
+// parameters - only the ones that have a value are sent.
+export const fetchProducts = ({ category, filter, sort, limit, offset } = {}) => (dispatch) => {
   dispatch(setFetchState('FETCHING'))
 
   const queryParts = []
   if (category) queryParts.push(`category=${category}`)
   if (filter) queryParts.push(`filter=${encodeURIComponent(filter)}`)
   if (sort) queryParts.push(`sort=${sort}`)
+  if (limit) queryParts.push(`limit=${limit}`)
+  if (offset) queryParts.push(`offset=${offset}`)
   const query = queryParts.length > 0 ? `?${queryParts.join('&')}` : ''
 
   return api

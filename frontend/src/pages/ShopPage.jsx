@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 import { LayoutGrid, List, Loader2 } from 'lucide-react'
-import { fetchProducts, setFilter, setSort } from '../redux/actions/productActions'
+import {
+  fetchProducts,
+  setFilter,
+  setSort,
+  setOffset,
+} from '../redux/actions/productActions'
 
 function getCategoryPath(category) {
   const genderWord = category.gender === 'k' ? 'kadin' : 'erkek'
@@ -11,8 +16,6 @@ function getCategoryPath(category) {
 }
 
 const brands = ['hooli', 'Lyft', 'stripe', 'aws', 'reddit']
-
-const pageNumbers = [1, 2, 3]
 
 function ShopPage() {
   const dispatch = useDispatch()
@@ -23,14 +26,20 @@ function ShopPage() {
   const fetchState = useSelector((state) => state.product.fetchState)
   const filter = useSelector((state) => state.product.filter)
   const sort = useSelector((state) => state.product.sort)
+  const limit = useSelector((state) => state.product.limit)
   const params = useParams()
   const activeCategory = params.categoryId
     ? categories.find((category) => String(category.id) === params.categoryId)
     : null
 
+  const totalPages = Math.ceil(total / limit) || 1
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1)
+
   useEffect(() => {
-    dispatch(fetchProducts({ category: params.categoryId, filter, sort }))
-  }, [dispatch, params.categoryId, filter, sort])
+    const offset = (activePage - 1) * limit
+    dispatch(setOffset(offset))
+    dispatch(fetchProducts({ category: params.categoryId, filter, sort, limit, offset }))
+  }, [dispatch, params.categoryId, filter, sort, activePage, limit])
 
   return (
     <div className="flex flex-col">
@@ -136,8 +145,12 @@ function ShopPage() {
             </div>
           )}
 
-          <div className="flex items-center justify-center gap-2 text-sm font-bold">
-            <button type="button" className="px-3 py-2 text-neutral-400">
+          <div className="flex flex-wrap items-center justify-center gap-2 text-sm font-bold">
+            <button
+              type="button"
+              onClick={() => setActivePage(1)}
+              className="px-3 py-2 text-neutral-500"
+            >
               First
             </button>
             {pageNumbers.map((page) => (
@@ -152,7 +165,11 @@ function ShopPage() {
                 {page}
               </button>
             ))}
-            <button type="button" className="px-3 py-2 text-neutral-500">
+            <button
+              type="button"
+              onClick={() => setActivePage((page) => Math.min(page + 1, totalPages))}
+              className="px-3 py-2 text-neutral-500"
+            >
               Next
             </button>
           </div>
