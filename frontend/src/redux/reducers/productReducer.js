@@ -1,5 +1,6 @@
 import {
   SET_CATEGORIES,
+  SET_PRODUCT,
   SET_PRODUCT_LIST,
   SET_TOTAL,
   SET_FETCH_STATE,
@@ -18,6 +19,7 @@ export const FETCH_STATES = {
 
 const initialState = {
   categories: [],
+  product: null,
   productList: [],
   total: 0,
   limit: 25,
@@ -31,6 +33,8 @@ function productReducer(state = initialState, action) {
   switch (action.type) {
     case SET_CATEGORIES:
       return { ...state, categories: action.payload }
+    case SET_PRODUCT:
+      return { ...state, product: action.payload }
     case SET_PRODUCT_LIST:
       return { ...state, productList: action.payload }
     case SET_TOTAL:

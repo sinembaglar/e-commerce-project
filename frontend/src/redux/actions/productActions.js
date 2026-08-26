@@ -1,6 +1,7 @@
 import api from '../../api/axios'
 
 export const SET_CATEGORIES = 'product/setCategories'
+export const SET_PRODUCT = 'product/setProduct'
 export const SET_PRODUCT_LIST = 'product/setProductList'
 export const SET_TOTAL = 'product/setTotal'
 export const SET_FETCH_STATE = 'product/setFetchState'
@@ -10,6 +11,7 @@ export const SET_FILTER = 'product/setFilter'
 export const SET_SORT = 'product/setSort'
 
 export const setCategories = (categories) => ({ type: SET_CATEGORIES, payload: categories })
+export const setProduct = (product) => ({ type: SET_PRODUCT, payload: product })
 export const setProductList = (productList) => ({ type: SET_PRODUCT_LIST, payload: productList })
 export const setTotal = (total) => ({ type: SET_TOTAL, payload: total })
 export const setFetchState = (fetchState) => ({ type: SET_FETCH_STATE, payload: fetchState })
@@ -44,6 +46,22 @@ export const fetchProducts = ({ category, filter, sort, limit, offset } = {}) =>
     .then(({ data }) => {
       dispatch(setTotal(data.total))
       dispatch(setProductList(data.products))
+      dispatch(setFetchState('FETCHED'))
+    })
+    .catch(() => {
+      dispatch(setFetchState('FAILED'))
+    })
+}
+
+// Thunk: fetches a single product by id and stores it, for the Product
+// Detail Page.
+export const fetchProduct = (productId) => (dispatch) => {
+  dispatch(setFetchState('FETCHING'))
+
+  return api
+    .get(`/products/${productId}`)
+    .then(({ data }) => {
+      dispatch(setProduct(data))
       dispatch(setFetchState('FETCHED'))
     })
     .catch(() => {

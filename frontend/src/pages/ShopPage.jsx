@@ -20,6 +20,30 @@ function getCategoryPath(category) {
   return `/shop/${genderWord}/${categoryName}/${category.id}`
 }
 
+function slugify(name) {
+  return name
+    .toLowerCase()
+    .replace(/ı/g, 'i')
+    .replace(/ğ/g, 'g')
+    .replace(/ü/g, 'u')
+    .replace(/ş/g, 's')
+    .replace(/ö/g, 'o')
+    .replace(/ç/g, 'c')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+// Product URLs look like /shop/:gender/:categoryName/:categoryId/:productNameSlug/:productId
+// which needs the product's category info, so we look it up by category_id.
+function getProductPath(product, categories) {
+  const category = categories.find((c) => c.id === product.category_id)
+  if (!category) return `/product/${product.id}`
+
+  const categoryPath = getCategoryPath(category)
+  const slug = slugify(product.name)
+  return `${categoryPath}/${slug}/${product.id}`
+}
+
 const brands = ['hooli', 'Lyft', 'stripe', 'aws', 'reddit']
 
 function ShopPage() {
@@ -132,14 +156,14 @@ function ShopPage() {
               {productList.map((p) => (
                 <Link
                   key={p.id}
-                  to={`/product/${p.id}`}
-                  className="flex basis-full flex-col items-center gap-1 text-center lg:basis-[calc(25%-12px)]"
+                  to={getProductPath(p, categories)}
+                  className="group flex basis-full cursor-pointer flex-col items-center gap-1 text-center lg:basis-[calc(25%-12px)]"
                 >
                   <div className="flex aspect-[3/4] w-full overflow-hidden">
                     <img
                       src={p.images[0]?.url}
                       alt={p.name}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
                     />
                   </div>
                   <span className="mt-2 text-sm font-bold text-slate-900">{p.name}</span>

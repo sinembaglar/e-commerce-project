@@ -51,6 +51,19 @@
           }
         },
         {
+          "name": "Get Product By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products/322",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "322"]
+            },
+            "description": "Returns a single product, used to populate the Product Detail Page.\n\nResponse 200:\n{\"id\":322,\"name\":\"Gri Regular Astar\",\"description\":\"...\",\"price\":461.99,\"stock\":140,\"store_id\":1,\"category_id\":3,\"rating\":3.64,\"sell_count\":281,\"images\":[{\"url\":\"<cdn url>\",\"index\":0}]}\n\nAn invalid/unknown id returns 500."
+          }
+        },
+        {
           "name": "Get Products - Category + Filter + Sort",
           "request": {
             "method": "GET",

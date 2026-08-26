@@ -1,121 +1,142 @@
-import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useHistory, useParams } from 'react-router-dom'
 import {
   ChevronLeft,
   ChevronRight,
   Star,
-  StarHalf,
   Heart,
   ShoppingCart,
-  Eye,
+  Loader2,
 } from 'lucide-react'
-import ss2Img from '../assets/imgs/ss2.png'
-
-const galleryImages = [ss2Img, ss2Img]
-
-const colorClasses = {
-  blue: 'bg-blue-500',
-  green: 'bg-emerald-500',
-  orange: 'bg-orange-500',
-  black: 'bg-slate-900',
-}
-
-const colors = ['blue', 'green', 'orange', 'black']
+import { fetchProduct } from '../redux/actions/productActions'
 
 const tabs = [
   { id: 'description', label: 'Description' },
   { id: 'additional', label: 'Additional Information' },
-  { id: 'reviews', label: 'Reviews (0)' },
+  { id: 'reviews', label: 'Reviews' },
 ]
 
 function ProductDetailPage() {
-  const { id } = useParams()
+  const { productId, id } = useParams()
+  const targetId = productId || id
+  const dispatch = useDispatch()
+  const history = useHistory()
+  const product = useSelector((state) => state.product.product)
+  const fetchState = useSelector((state) => state.product.fetchState)
   const [activeImage, setActiveImage] = useState(0)
   const [activeTab, setActiveTab] = useState('description')
 
-  const showPrev = () =>
-    setActiveImage((i) => (i === 0 ? galleryImages.length - 1 : i - 1))
-  const showNext = () =>
-    setActiveImage((i) => (i === galleryImages.length - 1 ? 0 : i + 1))
+  useEffect(() => {
+    dispatch(fetchProduct(targetId))
+  }, [dispatch, targetId])
+
+  if (fetchState === 'FETCHING' || !product) {
+    return (
+      <div className="flex justify-center py-24">
+        <Loader2 size={32} className="animate-spin text-sky-500" />
+      </div>
+    )
+  }
+
+  const images = product.images || []
 
   return (
     <div className="flex flex-col">
       <section className="py-8">
         <div className="container mx-auto flex flex-col gap-8 px-4 lg:flex-row lg:px-10">
+          <button
+            type="button"
+            onClick={() => history.goBack()}
+            className="flex items-center gap-1 self-start text-sm font-bold text-neutral-500 hover:text-sky-500 lg:hidden"
+          >
+            <ChevronLeft size={16} />
+            Back
+          </button>
+
           <div className="flex flex-col gap-3 lg:w-1/2">
             <div className="relative flex aspect-[4/3] w-full overflow-hidden bg-neutral-100">
               <img
-                src={galleryImages[activeImage]}
-                alt="Ürün görseli"
+                src={images[activeImage]?.url}
+                alt={product.name}
                 className="h-full w-full object-cover"
               />
-              <button
-                type="button"
-                onClick={showPrev}
-                aria-label="Önceki görsel"
-                className="absolute left-2 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-full bg-white/80 p-1.5 text-slate-900 shadow"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <button
-                type="button"
-                onClick={showNext}
-                aria-label="Sonraki görsel"
-                className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-full bg-white/80 p-1.5 text-slate-900 shadow"
-              >
-                <ChevronRight size={20} />
-              </button>
+              {images.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setActiveImage((i) => (i === 0 ? images.length - 1 : i - 1))
+                    }
+                    aria-label="Önceki görsel"
+                    className="absolute left-2 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-full bg-white/80 p-1.5 text-slate-900 shadow"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setActiveImage((i) => (i === images.length - 1 ? 0 : i + 1))
+                    }
+                    aria-label="Sonraki görsel"
+                    className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-full bg-white/80 p-1.5 text-slate-900 shadow"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                </>
+              )}
             </div>
-            <div className="flex gap-3">
-              {galleryImages.map((img, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => setActiveImage(index)}
-                  className={`flex h-16 w-16 overflow-hidden border-2 ${
-                    index === activeImage ? 'border-sky-500' : 'border-transparent'
-                  }`}
-                >
-                  <img src={img} alt="" className="h-full w-full object-cover" />
-                </button>
-              ))}
-            </div>
+            {images.length > 1 && (
+              <div className="flex gap-3">
+                {images.map((img, index) => (
+                  <button
+                    key={img.url}
+                    type="button"
+                    onClick={() => setActiveImage(index)}
+                    className={`flex h-16 w-16 overflow-hidden border-2 ${
+                      index === activeImage ? 'border-sky-500' : 'border-transparent'
+                    }`}
+                  >
+                    <img src={img.url} alt="" className="h-full w-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-3 lg:w-1/2">
-            <h1 className="text-xl font-bold text-slate-900">Floating Phone</h1>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center text-amber-400">
-                <Star size={16} className="fill-amber-400" />
-                <Star size={16} className="fill-amber-400" />
-                <Star size={16} className="fill-amber-400" />
-                <Star size={16} className="fill-amber-400" />
-                <StarHalf size={16} className="fill-amber-400" />
-              </div>
-              <span className="text-sm text-neutral-500">10 Reviews</span>
-            </div>
-            <span className="text-2xl font-bold text-slate-900">$1,139.33</span>
-            <span className="text-sm text-neutral-500">
-              Availability : <span className="font-bold text-sky-500">In Stock</span>
-            </span>
-            <p className="text-sm text-neutral-500">
-              Met minim Mollie non desert Alamo est sit cliquey dolor do met sent. RELIT
-              official consequent door ENIM RELIT Mollie. Excitation venial consequent sent
-              nostrum met.
-            </p>
+            <button
+              type="button"
+              onClick={() => history.goBack()}
+              className="hidden items-center gap-1 self-start text-sm font-bold text-neutral-500 hover:text-sky-500 lg:flex"
+            >
+              <ChevronLeft size={16} />
+              Back
+            </button>
 
-            <div className="flex items-center gap-3 border-t border-neutral-200 pt-4">
-              {colors.map((color) => (
-                <span key={color} className={`h-5 w-5 rounded-full ${colorClasses[color]}`} />
-              ))}
+            <h1 className="text-xl font-bold text-slate-900">{product.name}</h1>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 text-amber-400">
+                <Star size={16} className="fill-amber-400" />
+                <span className="text-sm font-bold text-slate-900">{product.rating}</span>
+              </div>
+              <span className="text-sm text-neutral-500">{product.sell_count} sold</span>
             </div>
+            <span className="text-2xl font-bold text-slate-900">{product.price} TL</span>
+            <span className="text-sm text-neutral-500">
+              Availability :{' '}
+              <span className="font-bold text-sky-500">
+                {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+              </span>
+            </span>
+            <p className="text-sm text-neutral-500">{product.description}</p>
 
             <div className="flex items-center gap-3 pt-2">
               <button
                 type="button"
                 className="bg-sky-500 px-8 py-3 text-sm font-bold text-white"
               >
-                Select Options
+                Add to Cart
               </button>
               <button
                 type="button"
@@ -130,13 +151,6 @@ function ProductDetailPage() {
                 className="flex items-center justify-center border border-neutral-300 p-3"
               >
                 <ShoppingCart size={18} className="text-neutral-500" />
-              </button>
-              <button
-                type="button"
-                aria-label="Hızlı görüntüle"
-                className="flex items-center justify-center border border-neutral-300 p-3"
-              >
-                <Eye size={18} className="text-neutral-500" />
               </button>
             </div>
           </div>
@@ -160,10 +174,9 @@ function ProductDetailPage() {
             ))}
           </div>
           <p className="text-center text-sm text-neutral-500 lg:text-left">
-            {activeTab === 'description' &&
-              'Met minim Mollie non desert Alamo est sit cliquey dolor do met sent. RELIT official consequent door ENIM RELIT Mollie.'}
-            {activeTab === 'additional' && `Ürün ID: ${id} için ek bilgiler burada listelenecek.`}
-            {activeTab === 'reviews' && 'Henüz yorum yapılmamış.'}
+            {activeTab === 'description' && product.description}
+            {activeTab === 'additional' && `${product.stock} items in stock.`}
+            {activeTab === 'reviews' && 'No reviews yet.'}
           </p>
         </div>
       </section>
