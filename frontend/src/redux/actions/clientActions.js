@@ -74,3 +74,32 @@ export const deleteAddress = (addressId) => (dispatch) => {
     dispatch(fetchAddressList())
   })
 }
+
+// Thunk: fetches the logged-in user's saved credit cards.
+export const fetchCardList = () => (dispatch) => {
+  return api.get('/user/card').then(({ data }) => {
+    dispatch(setCreditCards(data))
+  })
+}
+
+// Thunk: saves a new card, then refreshes the card list.
+export const addCard = (card) => (dispatch) => {
+  return api.post('/user/card', card).then(() => {
+    dispatch(fetchCardList())
+  })
+}
+
+// Thunk: updates an existing card (payload must include its id), then
+// refreshes the card list.
+export const updateCard = (card) => (dispatch) => {
+  return api.put('/user/card', card).then(() => {
+    dispatch(fetchCardList())
+  })
+}
+
+// Thunk: deletes a card, then refreshes the card list.
+export const deleteCard = (cardId) => (dispatch) => {
+  return api.delete(`/user/card/${cardId}`).then(() => {
+    dispatch(fetchCardList())
+  })
+}

@@ -269,6 +269,81 @@
           }
         }
       ]
+    },
+    {
+      "name": "Card",
+      "item": [
+        {
+          "name": "Get Card List",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/card",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "card"]
+            },
+            "description": "Returns the logged-in user's saved credit cards. Requires auth.\n\nResponse 200:\n[{\"id\":4,\"user_id\":21,\"card_no\":\"1234123412341234\",\"expire_month\":12,\"expire_year\":2025,\"name_on_card\":\"Ali Baş\"}]"
+          }
+        },
+        {
+          "name": "Add Card",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"card_no\": \"1234123412341234\",\n  \"expire_month\": 12,\n  \"expire_year\": 2025,\n  \"name_on_card\": \"Ali Baş\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/card",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "card"]
+            },
+            "description": "Saves a new card for the logged-in user. Requires auth.\n\nResponse 201:\n{\"0\":{\"id\":4,\"user_id\":21, ...same fields plus id/user_id}}"
+          }
+        },
+        {
+          "name": "Update Card",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 4,\n  \"card_no\": \"1234123412341234\",\n  \"expire_month\": 1,\n  \"expire_year\": 2030,\n  \"name_on_card\": \"Ahmet Taş\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/card",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "card"]
+            },
+            "description": "Updates an existing card. The payload must include the card's `id`. Requires auth.\n\nResponse 201:\n{\"0\":{...updated card}}"
+          }
+        },
+        {
+          "name": "Delete Card",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/card/4",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "card", "4"]
+            },
+            "description": "Deletes a saved card by id. Requires auth.\n\nResponse 201:\n\"Credit card record deleted!\""
+          }
+        }
+      ]
     }
   ]
 }

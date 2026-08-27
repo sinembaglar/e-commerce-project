@@ -7,8 +7,16 @@ import {
   addAddress,
   updateAddress,
   deleteAddress,
+  fetchCardList,
+  addCard,
+  updateCard,
+  deleteCard,
 } from '../redux/actions/clientActions'
-import { setAddress } from '../redux/actions/shoppingCartActions'
+import { setAddress, setPayment } from '../redux/actions/shoppingCartActions'
+
+const months = Array.from({ length: 12 }, (_, i) => i + 1)
+const currentYear = new Date().getFullYear()
+const years = Array.from({ length: 15 }, (_, i) => currentYear + i)
 
 const cities = [
   'adana', 'adıyaman', 'afyonkarahisar', 'ağrı', 'amasya', 'ankara', 'antalya', 'artvin',
@@ -51,15 +59,49 @@ function AddressCard({ address, selected, onSelect, onEdit, onDelete }) {
   )
 }
 
+function maskCardNumber(cardNo) {
+  return `**** **** **** ${cardNo.slice(-4)}`
+}
+
+function CardItem({ card, selected, onSelect, onEdit, onDelete }) {
+  return (
+    <label className="flex items-start gap-3 border border-neutral-200 p-4">
+      <input type="radio" checked={selected} onChange={onSelect} className="mt-1" />
+      <div className="flex flex-1 flex-col">
+        <span className="text-sm font-bold text-slate-900">{card.name_on_card}</span>
+        <span className="text-sm text-neutral-500">{maskCardNumber(card.card_no)}</span>
+        <span className="text-sm text-neutral-500">
+          Expires {card.expire_month}/{card.expire_year}
+        </span>
+      </div>
+      <div className="flex gap-2">
+        <button type="button" aria-label="Kartı düzenle" onClick={onEdit}>
+          <Pencil size={16} className="text-neutral-500 hover:text-sky-500" />
+        </button>
+        <button type="button" aria-label="Kartı sil" onClick={onDelete}>
+          <Trash2 size={16} className="text-neutral-500 hover:text-red-500" />
+        </button>
+      </div>
+    </label>
+  )
+}
+
 function CreateOrderPage() {
   const dispatch = useDispatch()
   const addressList = useSelector((state) => state.client.addressList)
+  const cardList = useSelector((state) => state.client.creditCards)
   const shippingAddress = useSelector((state) => state.shoppingCart.address)
+  const payment = useSelector((state) => state.shoppingCart.payment)
+
+  const [step, setStep] = useState(1)
 
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState(null)
   const [sameAsShipping, setSameAsShipping] = useState(true)
   const [billingAddressId, setBillingAddressId] = useState(null)
+
+  const [showCardForm, setShowCardForm] = useState(false)
+  const [editingCardId, setEditingCardId] = useState(null)
 
   const {
     register,
@@ -68,8 +110,16 @@ function CreateOrderPage() {
     formState: { errors, isSubmitting },
   } = useForm()
 
+  const {
+    register: registerCard,
+    handleSubmit: handleSubmitCard,
+    reset: resetCard,
+    formState: { errors: cardErrors, isSubmitting: isCardSubmitting },
+  } = useForm()
+
   useEffect(() => {
     dispatch(fetchAddressList())
+    dispatch(fetchCardList())
   }, [dispatch])
 
   const openAddForm = () => {
@@ -108,17 +158,51 @@ function CreateOrderPage() {
     if (billingAddressId === addressId) setBillingAddressId(null)
   }
 
+  const openAddCardForm = () => {
+    setEditingCardId(null)
+    resetCard({ name_on_card: '', card_no: '', expire_month: months[0], expire_year: years[0] })
+    setShowCardForm(true)
+  }
+
+  const openEditCardForm = (card) => {
+    setEditingCardId(card.id)
+    resetCard(card)
+    setShowCardForm(true)
+  }
+
+  const onSubmitCard = async (formData) => {
+    const cardData = {
+      ...formData,
+      expire_month: Number(formData.expire_month),
+      expire_year: Number(formData.expire_year),
+    }
+    if (editingCardId) {
+      await dispatch(updateCard({ ...cardData, id: editingCardId }))
+    } else {
+      await dispatch(addCard(cardData))
+    }
+    setShowCardForm(false)
+  }
+
+  const handleDeleteCard = (cardId) => {
+    dispatch(deleteCard(cardId))
+    if (payment?.id === cardId) dispatch(setPayment({}))
+  }
+
   return (
     <div className="flex flex-col">
       <section className="py-8">
         <div className="container mx-auto flex flex-col items-center gap-3 px-4 text-center lg:px-10">
           <h1 className="text-2xl font-bold text-slate-900">Create Order</h1>
-          <span className="text-sm font-bold text-sky-500">Step 1: Address Information</span>
+          <span className="text-sm font-bold text-sky-500">
+            {step === 1 ? 'Step 1: Address Information' : 'Step 2: Payment Information'}
+          </span>
         </div>
       </section>
 
       <section className="pb-10">
         <div className="container mx-auto px-4 lg:px-10">
+          {step === 1 && (
           <div className="mx-auto flex w-full max-w-2xl flex-col gap-3">
             <span className="text-base font-bold text-slate-900">Shipping Address</span>
 
@@ -293,11 +377,134 @@ function CreateOrderPage() {
             <button
               type="button"
               disabled={!shippingAddress?.id}
+              onClick={() => setStep(2)}
               className="mt-4 self-end bg-sky-500 px-8 py-3 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               Save and Continue
             </button>
           </div>
+          )}
+
+          {step === 2 && (
+          <div className="mx-auto flex w-full max-w-2xl flex-col gap-3">
+            <span className="text-base font-bold text-slate-900">Payment</span>
+
+            {cardList.length === 0 && (
+              <span className="text-sm text-neutral-500">No saved cards yet.</span>
+            )}
+
+            {cardList.map((card) => (
+              <CardItem
+                key={card.id}
+                card={card}
+                selected={payment?.id === card.id}
+                onSelect={() => dispatch(setPayment(card))}
+                onEdit={() => openEditCardForm(card)}
+                onDelete={() => handleDeleteCard(card.id)}
+              />
+            ))}
+
+            {!showCardForm && (
+              <button
+                type="button"
+                onClick={openAddCardForm}
+                className="self-start border border-sky-500 px-4 py-2 text-sm font-bold text-sky-500"
+              >
+                + Add New Card
+              </button>
+            )}
+
+            {showCardForm && (
+              <form
+                onSubmit={handleSubmitCard(onSubmitCard)}
+                className="flex flex-col gap-3 border border-neutral-200 p-4"
+              >
+                <div className="flex flex-col gap-1">
+                  <input
+                    type="text"
+                    placeholder="Name on Card"
+                    className={inputClass}
+                    {...registerCard('name_on_card', { required: 'Name on card is required' })}
+                  />
+                  {cardErrors.name_on_card && (
+                    <span className={errorClass}>{cardErrors.name_on_card.message}</span>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <input
+                    type="text"
+                    placeholder="Card Number"
+                    className={inputClass}
+                    {...registerCard('card_no', {
+                      required: 'Card number is required',
+                      pattern: { value: /^\d{16}$/, message: 'Card number must be 16 digits' },
+                    })}
+                  />
+                  {cardErrors.card_no && (
+                    <span className={errorClass}>{cardErrors.card_no.message}</span>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-3 lg:flex-row">
+                  <div className="flex flex-1 flex-col gap-1">
+                    <select className={inputClass} {...registerCard('expire_month')}>
+                      {months.map((month) => (
+                        <option key={month} value={month}>
+                          {month}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-1 flex-col gap-1">
+                    <select className={inputClass} {...registerCard('expire_year')}>
+                      {years.map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="submit"
+                    disabled={isCardSubmitting}
+                    className="flex items-center gap-2 bg-sky-500 px-6 py-3 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    {isCardSubmitting && <Loader2 size={16} className="animate-spin" />}
+                    {editingCardId ? 'Update Card' : 'Save Card'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowCardForm(false)}
+                    className="px-6 py-3 text-sm font-bold text-neutral-500"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            )}
+
+            <div className="mt-4 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="px-6 py-3 text-sm font-bold text-neutral-500"
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                disabled={!payment?.id}
+                className="bg-sky-500 px-8 py-3 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Complete Order
+              </button>
+            </div>
+          </div>
+          )}
         </div>
       </section>
     </div>
