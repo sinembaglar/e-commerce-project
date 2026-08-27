@@ -8,6 +8,8 @@ import AboutPage from '../pages/AboutPage'
 import SignupPage from '../pages/SignupPage'
 import LoginPage from '../pages/LoginPage'
 import CartPage from '../pages/CartPage'
+import CreateOrderPage from '../pages/CreateOrderPage'
+import ProtectedRoute from '../components/ProtectedRoute'
 
 function PageContent() {
   return (
@@ -28,6 +30,7 @@ function PageContent() {
         <Route exact path="/signup" component={SignupPage} />
         <Route exact path="/login" component={LoginPage} />
         <Route exact path="/cart" component={CartPage} />
+        <ProtectedRoute exact path="/create-order" component={CreateOrderPage} />
       </Switch>
     </main>
   )

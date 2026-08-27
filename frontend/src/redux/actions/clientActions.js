@@ -45,3 +45,32 @@ export const verifyToken = () => (dispatch) => {
       clearAuthToken()
     })
 }
+
+// Thunk: fetches the logged-in user's saved addresses.
+export const fetchAddressList = () => (dispatch) => {
+  return api.get('/user/address').then(({ data }) => {
+    dispatch(setAddressList(data))
+  })
+}
+
+// Thunk: saves a new address, then refreshes the address list.
+export const addAddress = (address) => (dispatch) => {
+  return api.post('/user/address', address).then(() => {
+    dispatch(fetchAddressList())
+  })
+}
+
+// Thunk: updates an existing address (payload must include its id), then
+// refreshes the address list.
+export const updateAddress = (address) => (dispatch) => {
+  return api.put('/user/address', address).then(() => {
+    dispatch(fetchAddressList())
+  })
+}
+
+// Thunk: deletes an address, then refreshes the address list.
+export const deleteAddress = (addressId) => (dispatch) => {
+  return api.delete(`/user/address/${addressId}`).then(() => {
+    dispatch(fetchAddressList())
+  })
+}

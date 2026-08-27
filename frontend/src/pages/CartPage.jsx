@@ -120,12 +120,12 @@ function CartPage() {
                   <span>{grandTotal.toFixed(2)} TL</span>
                 </div>
 
-                <button
-                  type="button"
-                  className="mt-2 bg-sky-500 px-6 py-3 text-sm font-bold text-white"
+                <Link
+                  to="/create-order"
+                  className="mt-2 flex justify-center bg-sky-500 px-6 py-3 text-sm font-bold text-white"
                 >
                   Create Order
-                </button>
+                </Link>
               </div>
             </div>
           )}

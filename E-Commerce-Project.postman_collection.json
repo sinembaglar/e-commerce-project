@@ -194,6 +194,81 @@
           }
         }
       ]
+    },
+    {
+      "name": "Address",
+      "item": [
+        {
+          "name": "Get Address List",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "description": "Raw token, no \"Bearer \" prefix" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/address",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "address"]
+            },
+            "description": "Returns the logged-in user's saved addresses. Requires auth.\n\nResponse 200:\n[{\"id\":5,\"user_id\":21,\"title\":\"ev adresi\",\"name\":\"Alişan\",\"surname\":\"Karababa\",\"phone\":\"05376845834\",\"city\":\"istanbul\",\"district\":\"esenler\",\"neighborhood\":\"merkez\",\"address\":\"Örnek sokak No:5 Daire:3\"}]\n\nResponse 401 (no/invalid token):\n{\"message\":\"No token\"}"
+          }
+        },
+        {
+          "name": "Add Address",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"ev adresi\",\n  \"name\": \"Alişan\",\n  \"surname\": \"Karababa\",\n  \"phone\": \"05376845834\",\n  \"city\": \"istanbul\",\n  \"district\": \"esenler\",\n  \"neighborhood\": \"merkez\",\n  \"address\": \"Örnek sokak No:5 Daire:3\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/address",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "address"]
+            },
+            "description": "Creates a new saved address for the logged-in user. Requires auth.\n\nNote: the task's sample payload omits the `address` field, but the real API needs it separately from `neighborhood`.\n\nResponse 201:\n{\"0\":{\"id\":5,\"user_id\":21, ...same fields plus id/user_id}}"
+          }
+        },
+        {
+          "name": "Update Address",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 5,\n  \"title\": \"ev adresi guncel\",\n  \"name\": \"Alişan\",\n  \"surname\": \"Karababa\",\n  \"phone\": \"05376845834\",\n  \"city\": \"istanbul\",\n  \"district\": \"esenler\",\n  \"neighborhood\": \"merkez\",\n  \"address\": \"Güncellenmiş adres bilgisi\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/address",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "address"]
+            },
+            "description": "Updates an existing address. The payload must include the address's `id`. Requires auth.\n\nResponse 201:\n{\"0\":{...updated address}}"
+          }
+        },
+        {
+          "name": "Delete Address",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/address/5",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "address", "5"]
+            },
+            "description": "Deletes a saved address by id. Requires auth.\n\nResponse 201:\n\"Address record deleted!\""
+          }
+        }
+      ]
     }
   ]
 }
