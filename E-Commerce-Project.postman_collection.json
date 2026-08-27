@@ -344,6 +344,31 @@
           }
         }
       ]
+    },
+    {
+      "name": "Order",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address_id\": 3,\n  \"order_date\": \"2024-01-10T14:18:30\",\n  \"card_no\": 1234123412341234,\n  \"card_name\": \"Ali Baş\",\n  \"card_expire_month\": 12,\n  \"card_expire_year\": 2025,\n  \"card_ccv\": 321,\n  \"price\": 145.99,\n  \"products\": [\n    { \"product_id\": 2, \"count\": 1, \"detail\": \"\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/order",
+              "host": ["{{baseUrl}}"],
+              "path": ["order"]
+            },
+            "description": "Places an order for the logged-in user. Requires auth. `card_no`, `card_ccv`, price and month/year are numbers, not strings.\n\n`detail` per product is a free-text variant description (e.g. color/size) - our app has no variant-selection UI, so it's sent as an empty string.\n\nResponse 201:\n{\"id\":6,\"address_id\":3,\"order_date\":\"...\",\"card_no\":1234123412341234,\"card_name\":\"Ali Baş\",\"card_expire_month\":12,\"card_expire_year\":2025,\"price\":145.99,\"products\":[3]}"
+          }
+        }
+      ]
     }
   ]
 }

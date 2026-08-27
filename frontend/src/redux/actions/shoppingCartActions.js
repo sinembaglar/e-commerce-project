@@ -1,3 +1,5 @@
+import api from '../../api/axios'
+
 export const SET_CART = 'shoppingCart/setCart'
 export const SET_PAYMENT = 'shoppingCart/setPayment'
 export const SET_ADDRESS = 'shoppingCart/setAddress'
@@ -52,4 +54,13 @@ export const toggleCartItemChecked = (productId) => (dispatch, getState) => {
     item.product.id === productId ? { ...item, checked: !item.checked } : item
   )
   dispatch(setCart(newCart))
+}
+
+// Thunk: submits the order, then clears the cart, payment and address.
+export const createOrder = (orderPayload) => (dispatch) => {
+  return api.post('/order', orderPayload).then(() => {
+    dispatch(setCart([]))
+    dispatch(setPayment({}))
+    dispatch(setAddress({}))
+  })
 }

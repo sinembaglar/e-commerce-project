@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { Pencil, Trash2, Loader2 } from 'lucide-react'
+import { toast } from 'react-toastify'
 import {
   fetchAddressList,
   addAddress,
@@ -12,7 +14,7 @@ import {
   updateCard,
   deleteCard,
 } from '../redux/actions/clientActions'
-import { setAddress, setPayment } from '../redux/actions/shoppingCartActions'
+import { setAddress, setPayment, createOrder } from '../redux/actions/shoppingCartActions'
 
 const months = Array.from({ length: 12 }, (_, i) => i + 1)
 const currentYear = new Date().getFullYear()
@@ -88,8 +90,10 @@ function CardItem({ card, selected, onSelect, onEdit, onDelete }) {
 
 function CreateOrderPage() {
   const dispatch = useDispatch()
+  const history = useHistory()
   const addressList = useSelector((state) => state.client.addressList)
   const cardList = useSelector((state) => state.client.creditCards)
+  const cart = useSelector((state) => state.shoppingCart.cart)
   const shippingAddress = useSelector((state) => state.shoppingCart.address)
   const payment = useSelector((state) => state.shoppingCart.payment)
 
@@ -102,6 +106,9 @@ function CreateOrderPage() {
 
   const [showCardForm, setShowCardForm] = useState(false)
   const [editingCardId, setEditingCardId] = useState(null)
+
+  const [ccv, setCcv] = useState('')
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false)
 
   const {
     register,
@@ -187,6 +194,38 @@ function CreateOrderPage() {
   const handleDeleteCard = (cardId) => {
     dispatch(deleteCard(cardId))
     if (payment?.id === cardId) dispatch(setPayment({}))
+  }
+
+  const handlePlaceOrder = async () => {
+    const checkedItems = cart.filter((item) => item.checked)
+    const price = checkedItems.reduce((sum, item) => sum + item.product.price * item.count, 0)
+
+    const orderPayload = {
+      address_id: shippingAddress.id,
+      order_date: new Date().toISOString(),
+      card_no: Number(payment.card_no),
+      card_name: payment.name_on_card,
+      card_expire_month: payment.expire_month,
+      card_expire_year: payment.expire_year,
+      card_ccv: Number(ccv),
+      price,
+      products: checkedItems.map((item) => ({
+        product_id: item.product.id,
+        count: item.count,
+        detail: '',
+      })),
+    }
+
+    setIsPlacingOrder(true)
+    try {
+      await dispatch(createOrder(orderPayload))
+      toast.success('Your order has been placed successfully!')
+      history.push('/')
+    } catch {
+      toast.error('Something went wrong while placing your order, please try again.')
+    } finally {
+      setIsPlacingOrder(false)
+    }
   }
 
   return (
@@ -487,6 +526,19 @@ function CreateOrderPage() {
               </form>
             )}
 
+            {payment?.id && (
+              <div className="flex flex-col gap-1">
+                <input
+                  type="text"
+                  value={ccv}
+                  onChange={(e) => setCcv(e.target.value)}
+                  placeholder="CVV"
+                  maxLength={3}
+                  className={`${inputClass} max-w-[120px]`}
+                />
+              </div>
+            )}
+
             <div className="mt-4 flex items-center justify-between">
               <button
                 type="button"
@@ -497,9 +549,11 @@ function CreateOrderPage() {
               </button>
               <button
                 type="button"
-                disabled={!payment?.id}
-                className="bg-sky-500 px-8 py-3 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={!payment?.id || ccv.length !== 3 || isPlacingOrder}
+                onClick={handlePlaceOrder}
+                className="flex items-center gap-2 bg-sky-500 px-8 py-3 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
               >
+                {isPlacingOrder && <Loader2 size={16} className="animate-spin" />}
                 Complete Order
               </button>
             </div>
