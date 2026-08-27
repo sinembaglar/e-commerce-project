@@ -367,6 +367,21 @@
             },
             "description": "Places an order for the logged-in user. Requires auth. `card_no`, `card_ccv`, price and month/year are numbers, not strings.\n\n`detail` per product is a free-text variant description (e.g. color/size) - our app has no variant-selection UI, so it's sent as an empty string.\n\nResponse 201:\n{\"id\":6,\"address_id\":3,\"order_date\":\"...\",\"card_no\":1234123412341234,\"card_name\":\"Ali Baş\",\"card_expire_month\":12,\"card_expire_year\":2025,\"price\":145.99,\"products\":[3]}"
           }
+        },
+        {
+          "name": "Get Previous Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/order",
+              "host": ["{{baseUrl}}"],
+              "path": ["order"]
+            },
+            "description": "Returns the logged-in user's previous orders, used to populate the Previous Orders page. Requires auth.\n\nNote: unlike the Create Order response, here `products` is an array of full product objects (id, name, description, price, count, images), not just ids.\n\nResponse 200:\n[{\"id\":6,\"user_id\":21,\"address_id\":3,\"order_date\":\"2024-01-10T14:18:30\",\"card_no\":1234123412341234,\"card_name\":\"Ali Baş\",\"card_expire_month\":12,\"card_expire_year\":2025,\"price\":145.99,\"products\":[{\"id\":2,\"name\":\"Siyah %100 Pamuk\",\"description\":\"...\",\"price\":145.99,\"count\":1,\"images\":[{\"url\":\"<cdn url>\",\"index\":0}]}]}]"
+          }
         }
       ]
     }

@@ -6,6 +6,7 @@ export const SET_THEME = 'client/setTheme'
 export const SET_LANGUAGE = 'client/setLanguage'
 export const SET_ADDRESS_LIST = 'client/setAddressList'
 export const SET_CREDIT_CARDS = 'client/setCreditCards'
+export const SET_ORDERS = 'client/setOrders'
 
 export const setUser = (user) => ({ type: SET_USER, payload: user })
 export const setRoles = (roles) => ({ type: SET_ROLES, payload: roles })
@@ -13,6 +14,7 @@ export const setTheme = (theme) => ({ type: SET_THEME, payload: theme })
 export const setLanguage = (language) => ({ type: SET_LANGUAGE, payload: language })
 export const setAddressList = (addressList) => ({ type: SET_ADDRESS_LIST, payload: addressList })
 export const setCreditCards = (creditCards) => ({ type: SET_CREDIT_CARDS, payload: creditCards })
+export const setOrders = (orders) => ({ type: SET_ORDERS, payload: orders })
 
 // Thunk: logs in, stores the user on the client reducer, and remembers the
 // token in localStorage when the user opted in.
@@ -101,5 +103,12 @@ export const updateCard = (card) => (dispatch) => {
 export const deleteCard = (cardId) => (dispatch) => {
   return api.delete(`/user/card/${cardId}`).then(() => {
     dispatch(fetchCardList())
+  })
+}
+
+// Thunk: fetches the logged-in user's previous orders.
+export const fetchOrders = () => (dispatch) => {
+  return api.get('/order').then(({ data }) => {
+    dispatch(setOrders(data))
   })
 }

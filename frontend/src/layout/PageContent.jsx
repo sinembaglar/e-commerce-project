@@ -9,6 +9,7 @@ import SignupPage from '../pages/SignupPage'
 import LoginPage from '../pages/LoginPage'
 import CartPage from '../pages/CartPage'
 import CreateOrderPage from '../pages/CreateOrderPage'
+import PreviousOrdersPage from '../pages/PreviousOrdersPage'
 import ProtectedRoute from '../components/ProtectedRoute'
 
 function PageContent() {
@@ -31,6 +32,7 @@ function PageContent() {
         <Route exact path="/login" component={LoginPage} />
         <Route exact path="/cart" component={CartPage} />
         <ProtectedRoute exact path="/create-order" component={CreateOrderPage} />
+        <ProtectedRoute exact path="/orders" component={PreviousOrdersPage} />
       </Switch>
     </main>
   )

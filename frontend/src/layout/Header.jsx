@@ -41,6 +41,7 @@ function getCategoryPath(category) {
 }
 
 function AuthStatus({ className = '' }) {
+  const [open, setOpen] = useState(false)
   const user = useSelector((state) => state.client.user)
 
   if (user?.email) {
@@ -48,10 +49,28 @@ function AuthStatus({ className = '' }) {
     const avatarUrl = `https://www.gravatar.com/avatar/${hash}?d=identicon&s=32`
 
     return (
-      <span className={`flex items-center gap-2 font-bold text-slate-900 ${className}`}>
-        <img src={avatarUrl} alt={user.name} className="h-6 w-6 rounded-full" />
-        {user.name}
-      </span>
+      <div className="relative flex items-center">
+        <button
+          type="button"
+          onClick={() => setOpen(!open)}
+          className={`flex items-center gap-2 font-bold text-slate-900 ${className}`}
+        >
+          <img src={avatarUrl} alt={user.name} className="h-6 w-6 rounded-full" />
+          {user.name}
+        </button>
+
+        {open && (
+          <div className="absolute right-0 top-full z-20 flex w-48 flex-col border border-neutral-200 bg-white p-2 shadow-lg">
+            <Link
+              to="/orders"
+              onClick={() => setOpen(false)}
+              className="px-3 py-2 text-sm text-slate-900 hover:text-sky-500"
+            >
+              Previous Orders
+            </Link>
+          </div>
+        )}
+      </div>
     )
   }
 
